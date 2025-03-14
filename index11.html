@@ -6,7 +6,7 @@
     <title>Leitor de Relatório com Efeito de Virada de Página</title>
     
     <!-- Estilos do Turn.js -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/jquery.turn.min.css">
     
     <style>
         body {
@@ -55,13 +55,13 @@
     <!-- Contêiner do Flipbook -->
     <div id="flipbook">
         <div class="page">
-            <iframe src="pagina1.html"></iframe>
+            <iframe src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina1.html"></iframe>
         </div>
         <div class="page">
-            <iframe src="pagina2.html"></iframe>
+            <iframe src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina2.html"></iframe>
         </div>
         <div class="page">
-            <iframe src="pagina3.html"></iframe>
+            <iframe src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina3.html"></iframe>
         </div>
     </div>
 
@@ -70,12 +70,12 @@
         <button id="nextBtn" onclick="nextPage()">Próximo</button>
     </div>
 
-    <!-- Incluindo jQuery e Turn.js via CDN -->
+    <!-- Incluindo jQuery e Turn.js -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
-
+    <script src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/turn.min.js"></script>
+    
     <script>
-        // Inicializa o flipbook com Turn.js
+        // Inicializa o flipbook
         $(document).ready(function() {
             $('#flipbook').turn({
                 width: '100%',
@@ -85,26 +85,9 @@
                 duration: 1000, // Duração da animação
                 acceleration: true
             });
-
-            // Controlar os botões de navegação
-            $('#flipbook').bind('turn', function(event, page) {
-                // Desativa o botão "Anterior" se estiver na primeira página
-                if (page === 1) {
-                    $('#prevBtn').attr('disabled', true);
-                } else {
-                    $('#prevBtn').attr('disabled', false);
-                }
-
-                // Desativa o botão "Próximo" se estiver na última página
-                if (page === $('#flipbook').turn('pages')) {
-                    $('#nextBtn').attr('disabled', true);
-                } else {
-                    $('#nextBtn').attr('disabled', false);
-                }
-            });
         });
 
-        // Funções para navegação
+        // Funções para navegar pelas páginas
         function prevPage() {
             $('#flipbook').turn('previous');
         }
@@ -112,6 +95,23 @@
         function nextPage() {
             $('#flipbook').turn('next');
         }
+
+        // Controlar os botões de navegação
+        $('#flipbook').bind('turn', function(event, page) {
+            // Desativa o botão "Anterior" se estiver na primeira página
+            if (page === 1) {
+                $('#prevBtn').attr('disabled', true);
+            } else {
+                $('#prevBtn').attr('disabled', false);
+            }
+
+            // Desativa o botão "Próximo" se estiver na última página
+            if (page === $('#flipbook').turn('pages')) {
+                $('#nextBtn').attr('disabled', true);
+            } else {
+                $('#nextBtn').attr('disabled', false);
+            }
+        });
     </script>
 
 </body>
