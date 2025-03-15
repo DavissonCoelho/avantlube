@@ -28,11 +28,6 @@
             overflow: hidden;
             position: relative;
         }
-        .page iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
         .pagination {
             text-align: center;
             margin-top: 20px;
@@ -54,15 +49,7 @@
 
     <!-- Contêiner do Flipbook -->
     <div id="flipbook">
-        <div class="page">
-            <iframe src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina1.html"></iframe>
-        </div>
-        <div class="page">
-            <iframe src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina2.html"></iframe>
-        </div>
-        <div class="page">
-            <iframe src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina3.html"></iframe>
-        </div>
+        <!-- As páginas serão carregadas dinamicamente via AJAX -->
     </div>
 
     <div class="pagination">
@@ -72,19 +59,38 @@
 
     <!-- Incluindo jQuery e Turn.js -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/turn.min.js"></script>
+    <script src="https://davissoncoelho.github.io/avantlube/turn.min.js"></script>
     
     <script>
-        // Inicializa o flipbook
-        $(document).ready(function() {
-            $('#flipbook').turn({
-                width: '100%',
-                height: '100%',
-                autoCenter: true,
-                display: 'double',
-                duration: 1000, // Duração da animação
-                acceleration: true
+        // Função para carregar o conteúdo da página via AJAX
+        function loadPage(page) {
+            $.ajax({
+                url: 'https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/' + page + '.html', // URL das páginas no GitHub
+                success: function(data) {
+                    // Adiciona o conteúdo no flipbook
+                    $('#flipbook').append('<div class="page">' + data + '</div>');
+                    
+                    // Inicializa o efeito de virada de página após adicionar a página
+                    $('#flipbook').turn('destroy').turn({
+                        width: '100%',
+                        height: '100%',
+                        autoCenter: true,
+                        display: 'double',
+                        duration: 1000, // Duração da animação
+                        acceleration: true
+                    });
+                },
+                error: function() {
+                    console.log('Erro ao carregar a página');
+                }
             });
+        }
+
+        // Carregar as páginas ao iniciar
+        $(document).ready(function() {
+            loadPage('pagina1');
+            loadPage('pagina2');
+            loadPage('pagina3');
         });
 
         // Funções para navegar pelas páginas
