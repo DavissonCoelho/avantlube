@@ -70,21 +70,28 @@
         <button id="nextBtn" onclick="nextPage()">Próximo</button>
     </div>
 
-    <!-- Incluindo jQuery e Turn.js -->
+    <!-- Incluindo jQuery e Turn.js (verifique a ordem) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/turn.min.js"></script>
     
     <script>
+        // Verificar se o Turn.js foi carregado
+        console.log('Turn.js carregado', $.fn.turn); // Isso deve imprimir 'function' se o Turn.js foi carregado corretamente
+        
         // Inicializa o flipbook
         $(document).ready(function() {
-            $('#flipbook').turn({
-                width: '100%',
-                height: '100%',
-                autoCenter: true,
-                display: 'double',
-                duration: 1000, // Duração da animação
-                acceleration: true
-            });
+            if ($.fn.turn) {
+                $('#flipbook').turn({
+                    width: '100%',
+                    height: '100%',
+                    autoCenter: true,
+                    display: 'double',
+                    duration: 1000, // Duração da animação
+                    acceleration: true
+                });
+            } else {
+                console.error('Turn.js não foi carregado corretamente.');
+            }
         });
 
         // Funções para navegar pelas páginas
