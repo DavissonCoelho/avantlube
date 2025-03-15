@@ -49,7 +49,15 @@
 
     <!-- Contêiner do Flipbook -->
     <div id="flipbook">
-        <!-- As páginas serão carregadas dinamicamente via AJAX -->
+        <div class="page">
+            <iframe src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina1.html"></iframe>
+        </div>
+        <div class="page">
+            <iframe src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina2.html"></iframe>
+        </div>
+        <div class="page">
+            <iframe src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina3.html"></iframe>
+        </div>
     </div>
 
     <div class="pagination">
@@ -57,36 +65,13 @@
         <button id="nextBtn" onclick="nextPage()">Próximo</button>
     </div>
 
-    <!-- Incluindo jQuery (primeiro) e Turn.js (depois) -->
+    <!-- Incluindo jQuery e Turn.js diretamente do GitHub -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/jquery.turn.min.js"></script>
+    <script src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/turn.min.js"></script>
     
     <script>
-        // Função para carregar o conteúdo da página via AJAX
-        function loadPage(page) {
-            $.ajax({
-                url: 'https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/' + page + '.html', // URL das páginas no GitHub
-                success: function(data) {
-                    // Adiciona o conteúdo no flipbook
-                    $('#flipbook').append('<div class="page">' + data + '</div>');
-
-                    // Verifica se Turn.js foi carregado corretamente
-                    if (typeof $.fn.turn !== "function") {
-                        console.log("Turn.js não foi carregado corretamente.");
-                    } else {
-                        // Inicializa o efeito de virada de página após adicionar a página
-                        initializeFlipbook();
-                    }
-                },
-                error: function() {
-                    console.log('Erro ao carregar a página');
-                }
-            });
-        }
-
-        // Função para inicializar o flipbook
-        function initializeFlipbook() {
-            // Reinicia o flipbook para garantir que o Turn.js funcione corretamente
+        // Inicializa o flipbook
+        $(document).ready(function() {
             $('#flipbook').turn({
                 width: '100%',
                 height: '100%',
@@ -95,13 +80,6 @@
                 duration: 1000, // Duração da animação
                 acceleration: true
             });
-        }
-
-        // Carregar as páginas ao iniciar
-        $(document).ready(function() {
-            loadPage('pagina1');
-            loadPage('pagina2');
-            loadPage('pagina3');
         });
 
         // Funções para navegar pelas páginas
