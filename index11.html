@@ -69,9 +69,14 @@
                 success: function(data) {
                     // Adiciona o conteúdo no flipbook
                     $('#flipbook').append('<div class="page">' + data + '</div>');
-                    
-                    // Inicializa o efeito de virada de página após adicionar a página
-                    initializeFlipbook();
+
+                    // Verifica se Turn.js foi carregado corretamente
+                    if (typeof $.fn.turn !== "function") {
+                        console.log("Turn.js não foi carregado corretamente.");
+                    } else {
+                        // Inicializa o efeito de virada de página após adicionar a página
+                        initializeFlipbook();
+                    }
                 },
                 error: function() {
                     console.log('Erro ao carregar a página');
