@@ -1,49 +1,76 @@
-<script>
-    // Inicializa o flipbook
-    $(document).ready(function() {
-        $('#flipbook').turn({
-            width: '100%',
-            height: '100%',
-            autoCenter: true,
-            display: 'single', // Alterado para exibir páginas individuais
-            duration: 1000, // Duração da animação
-            acceleration: true
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flipbook com Turn.js</title>
+    <!-- Inclusão da biblioteca jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Inclusão do Turn.js -->
+    <script src="path/to/turn.min.js"></script>
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Contêiner do flipbook -->
+    <div id="flipbook">
+        <div><iframe src="pagina1.html" width="100%" height="100%"></iframe></div>
+        <div><iframe src="pagina2.html" width="100%" height="100%"></iframe></div>
+        <div><iframe src="pagina3.html" width="100%" height="100%"></iframe></div>
+    </div>
+    <!-- Controles de navegação -->
+    <button id="prevBtn" onclick="prevPage()">Anterior</button>
+    <button id="nextBtn" onclick="nextPage()">Próximo</button>
+    <p>Página atual: <span id="pageNumber">1</span></p>
+
+    <script>
+        // Inicializa o flipbook
+        $(document).ready(function() {
+            $('#flipbook').turn({
+                width: '100%',
+                height: '100%',
+                autoCenter: true,
+                display: 'single', // Exibe páginas individuais
+                duration: 1000, // Duração da animação
+                acceleration: true
+            });
+
+            // Atualiza o número da página ao inicializar
+            updatePageNumber($('#flipbook').turn('page'));
         });
 
-        // Atualiza o número da página ao inicializar
-        updatePageNumber($('#flipbook').turn('page'));
-    });
-
-    // Funções para navegar pelas páginas
-    function prevPage() {
-        $('#flipbook').turn('previous');
-    }
-
-    function nextPage() {
-        $('#flipbook').turn('next');
-    }
-
-    // Atualiza o número da página exibido
-    function updatePageNumber(page) {
-        $('#pageNumber').text(page);
-    }
-
-    // Controlar os botões de navegação e atualizar o número da página
-    $('#flipbook').bind('turn', function(event, page) {
-        updatePageNumber(page);
-
-        // Desativa o botão "Anterior" se estiver na primeira página
-        if (page === 1) {
-            $('#prevBtn').attr('disabled', true);
-        } else {
-            $('#prevBtn').attr('disabled', false);
+        // Funções para navegar pelas páginas
+        function prevPage() {
+            $('#flipbook').turn('previous');
         }
 
-        // Desativa o botão "Próximo" se estiver na última página
-        if (page === $('#flipbook').turn('pages')) {
-            $('#nextBtn').attr('disabled', true);
-        } else {
-            $('#nextBtn').attr('disabled', false);
+        function nextPage() {
+            $('#flipbook').turn('next');
         }
-    });
-</script>
+
+        // Atualiza o número da página exibido
+        function updatePageNumber(page) {
+            $('#pageNumber').text(page);
+        }
+
+        // Controla os botões de navegação e atualiza o número da página
+        $('#flipbook').bind('turn', function(event, page) {
+            updatePageNumber(page);
+
+            // Desativa o botão "Anterior" se estiver na primeira página
+            if (page === 1) {
+                $('#prevBtn').attr('disabled', true);
+            } else {
+                $('#prevBtn').attr('disabled', false);
+            }
+
+            // Desativa o botão "Próximo" se estiver na última página
+            if (page === $('#flipbook').turn('pages')) {
+                $('#nextBtn').attr('disabled', true);
+            } else {
+                $('#nextBtn').attr('disabled', false);
+            }
+        });
+    </script>
+</body>
+</html>
