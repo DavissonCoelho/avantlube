@@ -1,0 +1,49 @@
+<script>
+    // Inicializa o flipbook
+    $(document).ready(function() {
+        $('#flipbook').turn({
+            width: '100%',
+            height: '100%',
+            autoCenter: true,
+            display: 'single', // Alterado para exibir páginas individuais
+            duration: 1000, // Duração da animação
+            acceleration: true
+        });
+
+        // Atualiza o número da página ao inicializar
+        updatePageNumber($('#flipbook').turn('page'));
+    });
+
+    // Funções para navegar pelas páginas
+    function prevPage() {
+        $('#flipbook').turn('previous');
+    }
+
+    function nextPage() {
+        $('#flipbook').turn('next');
+    }
+
+    // Atualiza o número da página exibido
+    function updatePageNumber(page) {
+        $('#pageNumber').text(page);
+    }
+
+    // Controlar os botões de navegação e atualizar o número da página
+    $('#flipbook').bind('turn', function(event, page) {
+        updatePageNumber(page);
+
+        // Desativa o botão "Anterior" se estiver na primeira página
+        if (page === 1) {
+            $('#prevBtn').attr('disabled', true);
+        } else {
+            $('#prevBtn').attr('disabled', false);
+        }
+
+        // Desativa o botão "Próximo" se estiver na última página
+        if (page === $('#flipbook').turn('pages')) {
+            $('#nextBtn').attr('disabled', true);
+        } else {
+            $('#nextBtn').attr('disabled', false);
+        }
+    });
+</script>
