@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor de Relatório com Efeito de Virada de Página</title>
+    
+    <!-- Estilos do Turn.js -->
+    <link rel="stylesheet" href="https://davissoncoelho.github.io/avantlube/turn.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #flipbook {
+            width: 80%;
+            height: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .page {
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
+            overflow: hidden;
+            position: relative;
+        }
+        .page iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .page-number {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Leitor de Relatório - Efeito Livro</h1>
+
+    <!-- Contêiner do Flipbook -->
+    <div id="flipbook">
+        <div class="page">
+            <iframe src="https://davissoncoelho.github.io/avantlube/pagina1.html"></iframe>
+        </div>
+        <div class="page">
+            <iframe src="https://davissoncoelho.github.io/avantlube/pagina2.html"></iframe>
+        </div>
+        <div class="page">
+            <iframe src="https://davissoncoelho.github.io/avantlube/pagina3.html"></iframe>
+        </div>
+    </div>
+
+    <div class="pagination">
+        <button id="prevBtn" onclick="prevPage()">Anterior</button>
+        <button id="nextBtn" onclick="nextPage()">Próximo</button>
+    </div>
+
+    <div class="page-number">
+        Página: <span id="pageNumber">1</span>
+    </div>
+
+    <!-- Incluindo jQuery e Turn.js do GitHub Pages -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://davissoncoelho.github.io/avantlube/turn.min.js"></script>
+    
+    <script>
+        // Inicializa o flipbook
+        $(document).ready(function() {
+            if ($.fn.turn) {
+                $('#flipbook').turn({
+                    width: '100%',
+                    height: '100%',
+                    autoCenter: true,
+                    display: 'double',
+                    duration: 1000, // Duração da animação
+                    acceleration: true
+                });
+
+                // Atualiza o número da página ao inicializar
+                updatePageNumber();
+
+                // Atualiza o número da página ao virar a página
+                $('#flipbook').bind('turn', function(event, page) {
+                    updatePageNumber(page);
+                });
+            } else {
+                console.error('Turn.js não foi carregado corretamente.');
+            }
+        });
+
+        // Função para atualizar o número da página
+        function updatePageNumber(page) {
+            if (typeof page === 'undefined') {
+                page = $('#flipbook').turn('page');
+            }
+            $('#pageNumber').text(page);
+        }
+
+        // Funções para navegar pelas páginas
+        function prevPage() {
+            $('#flipbook').turn('previous');
+        }
+
+        function nextPage() {
+            $('#flipbook').turn('next');
+        }
+    </script>
+
+</body>
+</html>
