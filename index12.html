@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor de Relatório com Efeito de Virada de Página</title>
+    
+    <!-- Estilos do Turn.js -->
+    <link rel="stylesheet" href="https://davissoncoelho.github.io/avantlube/turn.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #flipbook {
+            width: 80%;
+            height: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .page {
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
+            overflow: hidden;
+            position: relative;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Leitor de Relatório - Efeito Livro</h1>
+
+    <!-- Contêiner do Flipbook -->
+    <div id="flipbook">
+        <div class="hard"></div> <!-- Capa Dura -->
+        <div class="page" id="page1"></div>
+        <div class="page" id="page2"></div>
+        <div class="page" id="page3"></div>
+        <div class="hard"></div> <!-- Capa Dura -->
+    </div>
+
+    <div class="pagination">
+        <button id="prevBtn" onclick="prevPage()">Anterior</button>
+        <button id="nextBtn" onclick="nextPage()">Próximo</button>
+    </div>
+
+    <!-- Incluindo jQuery e Turn.js do GitHub Pages -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://davissoncoelho.github.io/avantlube/turn.min.js"></script>
+    
+    <script>
+        // Função para carregar conteúdo externo e inserir na página
+        function loadPageContent(pageId, url) {
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(pageId).innerHTML = data;
+                })
+                .catch(error => console.error('Erro ao carregar o conteúdo da página:', error));
+        }
+
+        // Carregar conteúdo das páginas
+        loadPageContent('page1', 'https://davissoncoelho.github.io/avantlube/pagina1.html');
+        loadPageContent('page2', 'https://davissoncoelho.github.io/avantlube/pagina2.html');
+        loadPageContent('page3', 'https://davissoncoelho.github.io/avantlube/pagina3.html');
+
+        // Inicializa o flipbook após o carregamento do conteúdo
+        $(document).ready(function() {
+            // Verificar se o Turn.js foi carregado
+            if ($.fn.turn) {
+                $('#flipbook').turn({
+                    width: '100%',
+                    height: '100%',
+                    autoCenter: true,
+                    display: 'double',
+                    duration: 1000, // Duração da animação
+                    acceleration: true
+                });
+            } else {
+                console.error('Turn.js não foi carregado corretamente.');
+            }
+        });
+
+        // Funções para navegar pelas páginas
+        function prevPage() {
+            $('#flipbook').turn('previous');
+        }
+
+        function nextPage() {
+            $('#flipbook').turn('next');
+        }
+
+        // Controlar os botões de navegação
+        $('#flipbook').bind('turn', function(event, page) {
+            // Desativa o botão "Anterior" se estiver na primeira página
+            if (page === 1) {
+                $('#prevBtn').attr('disabled', true);
+            } else {
+                $('#prevBtn').attr('disabled', false);
+            }
+
+            // Desativa o botão "Próximo" se estiver na última página
+            if (page === $('#flipbook').turn('pages')) {
+                $('#nextBtn').attr('disabled', true);
+            } else {
+                $('#nextBtn').attr('disabled', false);
+            }
+        });
+    </script>
+
+</body>
+</html>
