@@ -84,6 +84,51 @@
             height: 100%;
             object-fit: contain; /* Ajusta a imagem para caber inteira na página */
         }
+
+        /* Estilo para o botão de imprimir */
+        .print-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .print-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos específicos para impressão */
+        @media print {
+            body * {
+                visibility: hidden; /* Oculta todos os elementos */
+            }
+
+            .book, .book * {
+                visibility: visible; /* Exibe apenas o livro e suas páginas */
+            }
+
+            .book {
+                width: 100%;
+                height: auto;
+                position: static;
+                box-shadow: none;
+            }
+
+            .page {
+                position: static;
+                transform: none;
+                box-shadow: none;
+                margin-bottom: 20px; /* Espaço entre as páginas na impressão */
+            }
+
+            .controls, .close-button, .print-button {
+                display: none; /* Oculta os botões durante a impressão */
+            }
+        }
     </style>
 </head>
 <body>
@@ -104,6 +149,9 @@
         <button class="hand-button" id="prevPage">👈</button>
         <button class="hand-button" id="nextPage">👉</button>
     </div>
+
+    <!-- Botão de imprimir -->
+    <button class="print-button" id="printButton">Imprimir</button>
 
     <!-- Áudio para o som de página virando -->
     <audio id="pageSound">
@@ -169,6 +217,11 @@
                     alert("Por favor, feche a aba/janela manualmente usando o botão de fechar do navegador.");
                 }
             }
+        });
+
+        // Botão de imprimir
+        document.getElementById('printButton').addEventListener('click', () => {
+            window.print(); // Abre a caixa de diálogo de impressão
         });
 
         // Garante que a página 1 esteja visível inicialmente
