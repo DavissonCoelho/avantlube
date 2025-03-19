@@ -171,8 +171,23 @@
 
         // Botão de fechar
         document.getElementById('closeButton').addEventListener('click', () => {
-            document.getElementById('book').style.display = 'none'; // Esconde o livro
+            // Solicita confirmação
+            const confirmClose = confirm("Tem certeza que deseja sair?");
+            if (confirmClose) {
+                // Tenta fechar a janela/aba
+                try {
+                    window.close();
+                } catch (error) {
+                    // Caso o navegador bloqueie o fechamento, exibe uma mensagem
+                    alert("Não foi possível fechar a janela. Por favor, feche manualmente.");
+                }
+            }
         });
+
+        // Garante que a página 1 esteja visível inicialmente
+        document.getElementById('page1').style.transform = 'rotateY(0deg)';
+        document.getElementById('page2').style.transform = 'rotateY(180deg)';
+        document.getElementById('page3').style.transform = 'rotateY(180deg)';
     </script>
 </body>
 </html>
