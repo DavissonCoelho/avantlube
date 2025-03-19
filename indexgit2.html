@@ -171,12 +171,10 @@
 
         // Botão de fechar
         document.getElementById('closeButton').addEventListener('click', () => {
-            // Solicita confirmação
             const confirmClose = confirm("Tem certeza que deseja sair?");
             if (confirmClose) {
-                // Tenta fechar a janela/aba
                 try {
-                    window.close();
+                    window.close(); // Tenta fechar a janela/aba
                 } catch (error) {
                     // Se o navegador bloquear o fechamento, redireciona para uma página em branco
                     window.location.href = "about:blank";
