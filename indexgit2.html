@@ -177,7 +177,9 @@
                     window.close(); // Tenta fechar a janela/aba
                 } catch (error) {
                     // Se o navegador bloquear o fechamento, redireciona para uma página em branco
-                    window.location.href = "about:blank";
+                   // window.location.href = "about:blank";
+                   alert("Por favor, feche a aba/janela manualmente usando o botão de fechar do navegador.");
+
                 }
             }
         });
