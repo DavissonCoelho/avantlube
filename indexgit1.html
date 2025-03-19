@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livro com Virada de Página Realista</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .book {
+            width: 300px;
+            height: 400px;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            transition: transform 1s ease-in-out;
+            transform-origin: left center; /* Ponto de origem da transformação */
+        }
+
+        /* Esconde todas as páginas, exceto a primeira */
+        .page:not(:first-child) {
+            transform: rotateY(180deg);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .hand-button {
+            font-size: 32px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        /* Efeito de sombra durante a virada */
+        .page.flipping {
+            box-shadow: -10px 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Botão de fechar */
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Estrutura HTML -->
+    <div class="book" id="book">
+        <button class="close-button" id="closeButton">✖</button>
+        <div class="page" id="page1"></div>
+        <div class="page" id="page2"></div>
+        <div class="page" id="page3"></div>
+    </div>
+
+    <!-- Controles com ícones de mão -->
+    <div class="controls">
+        <button class="hand-button" id="prevPage">👈</button>
+        <button class="hand-button" id="nextPage">👉</button>
+    </div>
+
+    <!-- Áudio para o som de página virando -->
+    <audio id="pageSound">
+        <source src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/page-flip-sound.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <script>
+        // URLs das páginas
+        const pages = [
+            "https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina1.html",
+            "https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina2.html",
+            "https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina3.html"
+        ];
+
+        // Carrega o conteúdo da página no elemento correspondente
+        async function loadPageContent(pageElement, url) {
+            try {
+                const response = await fetch(url);
+                const content = await response.text();
+                pageElement.innerHTML = content;
+            } catch (error) {
+                console.error("Erro ao carregar a página:", error);
+            }
+        }
+
+        // Carrega o conteúdo inicial das páginas
+        document.querySelectorAll('.page').forEach((pageElement, index) => {
+            loadPageContent(pageElement, pages[index]);
+        });
+
+        // JavaScript para navegação e efeitos
+        let currentPage = 1;
+        const totalPages = document.querySelectorAll('.page').length;
+        const pageSound = document.getElementById('pageSound');
+
+        function flipPage(direction) {
+            if (
+                (direction === 'next' && currentPage < totalPages) ||
+                (direction === 'prev' && currentPage > 1)
+            ) {
+                const currentPageElement = document.getElementById(`page${currentPage}`);
+                currentPageElement.classList.add('flipping');
+
+                // Toca o som de página virando
+                if (pageSound) {
+                    pageSound.currentTime = 0; // Reinicia o som
+                    pageSound.play();
+                }
+
+                setTimeout(() => {
+                    if (direction === 'next') {
+                        // Vira a página atual para a esquerda
+                        currentPageElement.style.transform = 'rotateY(-180deg)';
+                        currentPage++;
+                    } else {
+                        // Vira a página atual para a direita
+                        currentPageElement.style.transform = 'rotateY(180deg)';
+                        currentPage--;
+                    }
+
+                    // Revela a próxima página
+                    const nextPageElement = document.getElementById(`page${currentPage}`);
+                    if (nextPageElement) {
+                        nextPageElement.style.transform = 'rotateY(0deg)';
+                    }
+
+                    // Remove a classe de animação
+                    currentPageElement.classList.remove('flipping');
+                }, 1000); // Tempo da animação
+            }
+        }
+
+        // Eventos dos botões
+        document.getElementById('nextPage').addEventListener('click', () => flipPage('next'));
+        document.getElementById('prevPage').addEventListener('click', () => flipPage('prev'));
+
+        // Botão de fechar
+        document.getElementById('closeButton').addEventListener('click', () => {
+            document.getElementById('book').style.display = 'none'; // Esconde o livro
+        });
+    </script>
+</body>
+</html>
