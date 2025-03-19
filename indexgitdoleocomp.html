@@ -30,7 +30,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            background-color: white;
+            background-color: #f5f5dc; /* Cor de página de livro (bege claro) */
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
             box-sizing: border-box;
@@ -39,6 +39,17 @@
             transition: transform 1s ease-in-out;
             transform-origin: left center; /* Ponto de origem da transformação */
             overflow: hidden; /* Evita que o conteúdo ultrapasse os limites da página */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between; /* Alinha o conteúdo no topo e o número na base */
+        }
+
+        /* Número da página */
+        .page-number {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px; /* Espaço entre a imagem e o número */
         }
 
         /* Esconde todas as páginas, exceto a primeira */
@@ -52,12 +63,18 @@
             gap: 20px;
         }
 
-        .hand-button {
-            font-size: 32px;
+        /* Estilo para os botões de navegação */
+        .nav-button {
+            font-size: 24px;
             cursor: pointer;
             background: none;
             border: none;
-            padding: 0;
+            padding: 10px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-button:hover {
+            opacity: 0.8; /* Efeito de hover suave */
         }
 
         /* Efeito de sombra durante a virada */
@@ -81,13 +98,20 @@
         /* Estilo para imagens */
         .page img {
             width: 100%;
-            height: 100%;
+            height: auto;
+            max-height: 90%; /* Garante que a imagem não ultrapasse o espaço da página */
             object-fit: contain; /* Ajusta a imagem para caber inteira na página */
+        }
+
+        /* Container para os botões de imprimir e compartilhar */
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px; /* Espaço entre os botões */
         }
 
         /* Estilo para o botão de imprimir e compartilhar */
         .print-button, .share-button {
-            margin-top: 20px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
@@ -137,26 +161,51 @@
     <!-- Estrutura HTML -->
     <div class="book" id="book">
         <button class="close-button" id="closeButton">✖</button>
-        <div class="page" id="page1"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina1.jpg" alt="Página 1"></div>
-        <div class="page" id="page2"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina2.jpg" alt="Página 2"></div>
-        <div class="page" id="page3"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina3.jpg" alt="Página 3"></div>
-        <div class="page" id="page4"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina4.jpg" alt="Página 4"></div>
-        <div class="page" id="page5"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina5.jpg" alt="Página 5"></div>
-        <div class="page" id="page6"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina6.jpg" alt="Página 6"></div>
-        <div class="page" id="page7"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina7.jpg" alt="Página 7"></div>
+        <div class="page" id="page1">
+            <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina1.jpg" alt="Página 1">
+            <div class="page-number">1</div>
+        </div>
+        <div class="page" id="page2">
+            <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina2.jpg" alt="Página 2">
+            <div class="page-number">2</div>
+        </div>
+        <div class="page" id="page3">
+            <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina3.jpg" alt="Página 3">
+            <div class="page-number">3</div>
+        </div>
+        <div class="page" id="page4">
+            <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina4.jpg" alt="Página 4">
+            <div class="page-number">4</div>
+        </div>
+        <div class="page" id="page5">
+            <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina5.jpg" alt="Página 5">
+            <div class="page-number">5</div>
+        </div>
+        <div class="page" id="page6">
+            <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina6.jpg" alt="Página 6">
+            <div class="page-number">6</div>
+        </div>
+        <div class="page" id="page7">
+            <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina7.jpg" alt="Página 7">
+            <div class="page-number">7</div>
+        </div>
     </div>
 
-    <!-- Controles com ícones de mão -->
+    <!-- Controles com gotas de óleo -->
     <div class="controls">
-        <button class="hand-button" id="prevPage">👈</button>
-        <button class="hand-button" id="nextPage">👉</button>
+        <button class="nav-button" id="prevPage">
+            <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/gota-esquerda.png" alt="Anterior" width="32" height="32">
+        </button>
+        <button class="nav-button" id="nextPage">
+            <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/gota-direita.png" alt="Próxima" width="32" height="32">
+        </button>
     </div>
 
-    <!-- Botão de imprimir -->
-    <button class="print-button" id="printButton">Imprimir</button>
-
-    <!-- Botão de compartilhar -->
-    <button class="share-button" id="shareButton">Compartilhar</button>
+    <!-- Container para os botões de imprimir e compartilhar -->
+    <div class="button-container">
+        <button class="print-button" id="printButton">Imprimir</button>
+        <button class="share-button" id="shareButton">Compartilhar</button>
+    </div>
 
     <!-- Áudio para o som de página virando -->
     <audio id="pageSound">
@@ -186,11 +235,13 @@
                 }
                 currentPageElement.classList.add('flipping');
 
-                // Toca o som de página virando
-                if (pageSound) {
-                    pageSound.currentTime = 0; // Reinicia o som
-                    pageSound.play();
-                }
+                // Toca o som de página virando no meio da animação
+                setTimeout(() => {
+                    if (pageSound) {
+                        pageSound.currentTime = 0; // Reinicia o som
+                        pageSound.play();
+                    }
+                }, 700); // Atraso de 700ms para sincronizar com a animação
 
                 setTimeout(() => {
                     if (direction === 'next') {
