@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livro com Virada de Página Realista</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .book {
+            width: 800px; /* Largura maior para exibição ampliada */
+            height: 500px; /* Altura maior para exibição ampliada */
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            transition: transform 1s ease-in-out;
+            transform-origin: left center; /* Ponto de origem da transformação */
+            overflow: hidden; /* Evita que o conteúdo ultrapasse os limites da página */
+        }
+
+        /* Esconde todas as páginas, exceto a primeira */
+        .page:not(:first-child) {
+            transform: rotateY(180deg);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .hand-button {
+            font-size: 32px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        /* Efeito de sombra durante a virada */
+        .page.flipping {
+            box-shadow: -10px 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Botão de fechar */
+        .close-button {
+            position: absolute;
+            top: -40px; /* Posiciona acima do livro */
+            right: 0;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #333;
+            z-index: 1000; /* Garante que fique acima de tudo */
+        }
+
+        /* Estilo para imagens */
+        .page img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ajusta a imagem para caber inteira na página */
+        }
+
+        /* Estilo para o botão de imprimir */
+        .print-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .print-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos específicos para impressão */
+        @media print {
+            body * {
+                visibility: hidden; /* Oculta todos os elementos */
+            }
+
+            .book {
+                width: 100%;
+                height: auto;
+                position: static;
+                box-shadow: none;
+                visibility: visible; /* Exibe o livro */
+            }
+
+            .page {
+                position: static;
+                transform: none;
+                box-shadow: none;
+                margin-bottom: 20px; /* Espaço entre as páginas na impressão */
+                page-break-after: always; /* Força uma quebra de página após cada página */
+                visibility: visible; /* Exibe as páginas */
+            }
+
+            .controls, .close-button, .print-button {
+                display: none; /* Oculta os botões durante a impressão */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Estrutura HTML -->
+    <div class="book" id="book">
+        <button class="close-button" id="closeButton">✖</button>
+        <div class="page" id="page1"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina1.jpg" alt="Página 1"></div>
+        <div class="page" id="page2"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina2.jpg" alt="Página 2"></div>
+        <div class="page" id="page3"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina3.jpg" alt="Página 3"></div>
+        <div class="page" id="page4"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina4.jpg" alt="Página 4"></div>
+        <div class="page" id="page5"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina5.jpg" alt="Página 5"></div>
+        <div class="page" id="page6"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina6.jpg" alt="Página 6"></div>
+        <div class="page" id="page7"><img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina7.jpg" alt="Página 7"></div>
+    </div>
+
+    <!-- Controles com ícones de mão -->
+    <div class="controls">
+        <button class="hand-button" id="prevPage">👈</button>
+        <button class="hand-button" id="nextPage">👉</button>
+    </div>
+
+    <!-- Botão de imprimir -->
+    <button class="print-button" id="printButton">Imprimir</button>
+
+    <!-- Áudio para o som de página virando -->
+    <audio id="pageSound">
+        <source src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/page-flip-sound.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <script>
+        // JavaScript para navegação e efeitos
+        let currentPage = 1;
+        const totalPages = document.querySelectorAll('.page').length;
+        const pageSound = document.getElementById('pageSound');
+
+        function flipPage(direction) {
+            if (
+                (direction === 'next' && currentPage < totalPages) ||
+                (direction === 'prev' && currentPage > 1)
+            ) {
+                const currentPageElement = document.getElementById(`page${currentPage}`);
+                currentPageElement.classList.add('flipping');
+
+                // Toca o som de página virando
+                if (pageSound) {
+                    pageSound.currentTime = 0; // Reinicia o som
+                    pageSound.play();
+                }
+
+                setTimeout(() => {
+                    if (direction === 'next') {
+                        // Vira a página atual para a esquerda
+                        currentPageElement.style.transform = 'rotateY(-180deg)';
+                        currentPage++;
+                    } else {
+                        // Vira a página atual para a direita
+                        currentPageElement.style.transform = 'rotateY(180deg)';
+                        currentPage--;
+                    }
+
+                    // Revela a próxima página
+                    const nextPageElement = document.getElementById(`page${currentPage}`);
+                    if (nextPageElement) {
+                        nextPageElement.style.transform = 'rotateY(0deg)';
+                    }
+
+                    // Remove a classe de animação
+                    currentPageElement.classList.remove('flipping');
+                }, 1000); // Tempo da animação
+            }
+        }
+
+        // Eventos dos botões
+        document.getElementById('nextPage').addEventListener('click', () => flipPage('next'));
+        document.getElementById('prevPage').addEventListener('click', () => flipPage('prev'));
+
+        // Botão de fechar
+        document.getElementById('closeButton').addEventListener('click', () => {
+            const confirmClose = confirm("Tem certeza que deseja sair?");
+            if (confirmClose) {
+                try {
+                    window.close(); // Tenta fechar a janela/aba
+                } catch (error) {
+                    // Se o navegador bloquear o fechamento, exibe uma mensagem
+                    alert("Por favor, feche a aba/janela manualmente usando o botão de fechar do navegador.");
+                }
+            }
+        });
+
+        // Botão de imprimir
+        document.getElementById('printButton').addEventListener('click', () => {
+            const printOption = prompt("Digite o número da página que deseja imprimir (1 a 7) ou 'tudo' para imprimir todas as páginas:");
+
+            if (printOption === null) {
+                return; // Usuário cancelou
+            }
+
+            if (printOption.toLowerCase() === 'tudo') {
+                // Imprime todas as páginas
+                window.print();
+            } else {
+                const pageNumber = parseInt(printOption);
+                if (pageNumber >= 1 && pageNumber <= 7) {
+                    // Oculta todas as páginas, exceto a selecionada
+                    document.querySelectorAll('.page').forEach((page, index) => {
+                        if (index + 1 === pageNumber) {
+                            page.style.display = 'block';
+                        } else {
+                            page.style.display = 'none';
+                        }
+                    });
+
+                    // Abre a caixa de diálogo de impressão
+                    window.print();
+
+                    // Restaura a exibição de todas as páginas após a impressão
+                    document.querySelectorAll('.page').forEach((page) => {
+                        page.style.display = 'block';
+                    });
+                } else {
+                    alert("Opção inválida. Digite um número de 1 a 7 ou 'tudo'.");
+                }
+            }
+        });
+
+        // Garante que a página 1 esteja visível inicialmente
+        document.getElementById('page1').style.transform = 'rotateY(0deg)';
+        document.getElementById('page2').style.transform = 'rotateY(180deg)';
+        document.getElementById('page3').style.transform = 'rotateY(180deg)';
+        document.getElementById('page4').style.transform = 'rotateY(180deg)';
+        document.getElementById('page5').style.transform = 'rotateY(180deg)';
+        document.getElementById('page6').style.transform = 'rotateY(180deg)';
+        document.getElementById('page7').style.transform = 'rotateY(180deg)';
+    </script>
+</body>
+</html>
