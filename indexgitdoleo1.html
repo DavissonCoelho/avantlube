@@ -220,38 +220,7 @@
 
         // Botão de imprimir
         document.getElementById('printButton').addEventListener('click', () => {
-            const printOption = prompt("Digite o número da página que deseja imprimir (1 a 7) ou 'tudo' para imprimir todas as páginas:");
-
-            if (printOption === null) {
-                return; // Usuário cancelou
-            }
-
-            if (printOption.toLowerCase() === 'tudo') {
-                // Imprime todas as páginas
-                window.print();
-            } else {
-                const pageNumber = parseInt(printOption);
-                if (pageNumber >= 1 && pageNumber <= 7) {
-                    // Oculta todas as páginas, exceto a selecionada
-                    document.querySelectorAll('.page').forEach((page, index) => {
-                        if (index + 1 === pageNumber) {
-                            page.style.display = 'block';
-                        } else {
-                            page.style.display = 'none';
-                        }
-                    });
-
-                    // Abre a caixa de diálogo de impressão
-                    window.print();
-
-                    // Restaura a exibição de todas as páginas após a impressão
-                    document.querySelectorAll('.page').forEach((page) => {
-                        page.style.display = 'block';
-                    });
-                } else {
-                    alert("Opção inválida. Digite um número de 1 a 7 ou 'tudo'.");
-                }
-            }
+            window.print(); // Abre a caixa de diálogo de impressão
         });
 
         // Garante que a página 1 esteja visível inicialmente
