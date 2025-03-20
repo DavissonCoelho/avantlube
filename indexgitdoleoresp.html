@@ -90,6 +90,9 @@
             border: none;
             padding: 8px; /* Padding menor */
             transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Espaço entre o texto e a imagem */
         }
 
         .nav-button:hover {
@@ -143,20 +146,8 @@
             object-fit: contain; /* Ajusta a imagem para caber inteira na página */
         }
 
-        /* Container para os botões de imprimir e compartilhar */
-        .button-container {
-            margin-top: 10px; /* Espaçamento menor para telas pequenas */
-            display: flex;
-            gap: 10px; /* Espaço menor entre os botões */
-            position: fixed; /* Fixa os botões na parte inferior */
-            bottom: 20px; /* Distância do fundo */
-            left: 50%; /* Centraliza horizontalmente */
-            transform: translateX(-50%); /* Ajusta o posicionamento */
-            z-index: 1000; /* Garante que fique acima de tudo */
-        }
-
-        /* Estilo para o botão de imprimir e compartilhar */
-        .print-button, .share-button {
+        /* Estilo para o botão de imprimir */
+        .print-button {
             padding: 8px 16px; /* Padding menor */
             font-size: 14px; /* Tamanho menor para telas pequenas */
             cursor: pointer;
@@ -168,7 +159,7 @@
         }
 
         /* Efeito de hover */
-        .print-button:hover, .share-button:hover {
+        .print-button:hover {
             background-color: #333; /* Fundo preto mais escuro no hover */
             color: #ffd700; /* Texto dourado mais brilhante no hover */
         }
@@ -202,7 +193,7 @@
                 padding: 5px; /* Padding menor */
             }
 
-            .print-button, .share-button {
+            .print-button {
                 padding: 6px 12px; /* Padding menor */
                 font-size: 12px; /* Tamanho menor para telas pequenas */
             }
@@ -234,7 +225,7 @@
                 display: block !important; /* Garante que todas as páginas sejam exibidas */
             }
 
-            .controls, .close-button, .print-button, .share-button, .top-controls {
+            .controls, .close-button, .print-button, .top-controls {
                 display: none; /* Oculta os botões durante a impressão */
             }
         }
@@ -243,10 +234,11 @@
 <body>
     <!-- Estrutura HTML -->
     <div class="book-container">
-        <!-- Botões de zoom e fechar -->
+        <!-- Botões de zoom, imprimir e fechar -->
         <div class="top-controls">
             <button class="zoom-button" id="zoomIn">+</button>
             <button class="zoom-button" id="zoomOut">-</button>
+            <button class="print-button" id="printButton">Imprimir</button>
             <button class="close-button" id="closeButton">✖</button>
         </div>
 
@@ -282,16 +274,16 @@
             </div>
         </div>
 
-        <!-- Controles com gotas de óleo, imprimir e compartilhar -->
+        <!-- Controles com gotas de óleo e textos <Prev> e <Next> -->
         <div class="controls">
-            <button class="print-button" id="printButton">Imprimir</button>
             <button class="nav-button" id="prevPage">
+                <span>&lt;Prev</span>
                 <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/gotaesquerda.png" alt="Anterior" width="32" height="32">
             </button>
             <button class="nav-button" id="nextPage">
                 <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/gotadireita.png" alt="Próxima" width="32" height="32">
+                <span>Next&gt;</span>
             </button>
-            <button class="share-button" id="shareButton">Compartilhar</button>
         </div>
     </div>
 
@@ -376,42 +368,6 @@
         // Botão de imprimir
         document.getElementById('printButton').addEventListener('click', () => {
             window.print(); // Abre a caixa de diálogo de impressão
-        });
-
-        // Botão de compartilhar
-        document.getElementById('shareButton').addEventListener('click', async () => {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4'); // Cria um novo PDF no formato A4
-
-            // Converte cada página em uma imagem e adiciona ao PDF
-            for (let i = 1; i <= totalPages; i++) {
-                const pageElement = document.getElementById(`page${i}`);
-                const canvas = await html2canvas(pageElement); // Converte a página em uma imagem
-                const imgData = canvas.toDataURL('image/jpeg', 1.0); // Converte a imagem para base64
-                pdf.addImage(imgData, 'JPEG', 10, 10, 190, 277); // Adiciona a imagem ao PDF
-                if (i < totalPages) pdf.addPage(); // Adiciona uma nova página ao PDF
-            }
-
-            // Salva o PDF como um Blob
-            const pdfBlob = pdf.output('blob');
-            const pdfFile = new File([pdfBlob], 'apresentacao.pdf', { type: 'application/pdf' });
-
-            // Verifica se a Web Share API é suportada
-            if (navigator.share) {
-                try {
-                    // Compartilha o PDF usando a Web Share API
-                    await navigator.share({
-                        title: 'Apresentação Completa',
-                        files: [pdfFile],
-                    });
-                    alert('Compartilhamento concluído com sucesso!');
-                } catch (error) {
-                    console.error('Erro ao compartilhar:', error);
-                    alert('Compartilhamento cancelado ou falhou.');
-                }
-            } else {
-                alert('Seu navegador não suporta compartilhamento nativo. Use um navegador moderno.');
-            }
         });
 
         // Funções de zoom
