@@ -15,6 +15,7 @@
             min-height: 100vh;
             margin: 0;
             background-color: #f4f4f4;
+            overflow-x: hidden; /* Evita rolagem horizontal */
         }
 
         .book-container {
@@ -23,6 +24,7 @@
             align-items: center;
             width: 100%;
             max-width: 800px; /* Largura máxima para desktop */
+            position: relative;
         }
 
         .book {
@@ -73,6 +75,11 @@
             margin-top: 10px; /* Espaçamento menor para telas pequenas */
             display: flex;
             gap: 10px; /* Espaço menor entre os botões */
+            position: fixed; /* Fixa os botões na parte inferior */
+            bottom: 20px; /* Distância do fundo */
+            left: 50%; /* Centraliza horizontalmente */
+            transform: translateX(-50%); /* Ajusta o posicionamento */
+            z-index: 1000; /* Garante que fique acima de tudo */
         }
 
         /* Estilo para os botões de navegação */
@@ -94,17 +101,38 @@
             box-shadow: -10px 0 20px rgba(0, 0, 0, 0.2);
         }
 
-        /* Botão de fechar */
-        .close-button {
-            position: absolute;
-            top: -30px; /* Posiciona acima do livro */
-            right: 0;
+        /* Botão de fechar e zoom */
+        .top-controls {
+            position: fixed; /* Fixa os botões no topo */
+            top: 10px; /* Distância do topo */
+            right: 10px; /* Distância da direita */
+            display: flex;
+            gap: 10px; /* Espaço entre os botões */
+            z-index: 1000; /* Garante que fique acima de tudo */
+        }
+
+        .close-button, .zoom-button {
             font-size: 20px; /* Tamanho menor para telas pequenas */
             cursor: pointer;
             background: none;
             border: none;
-            color: #333;
-            z-index: 1000; /* Garante que fique acima de tudo */
+            padding: 8px; /* Padding menor */
+            transition: opacity 0.3s ease;
+        }
+
+        .close-button {
+            color: #333; /* Cor do botão de fechar */
+        }
+
+        .zoom-button {
+            background-color: black; /* Fundo preto */
+            color: gold; /* Texto dourado */
+            border-radius: 5px;
+        }
+
+        .zoom-button:hover {
+            background-color: #333; /* Fundo preto mais escuro no hover */
+            color: #ffd700; /* Texto dourado mais brilhante no hover */
         }
 
         /* Estilo para imagens */
@@ -120,6 +148,11 @@
             margin-top: 10px; /* Espaçamento menor para telas pequenas */
             display: flex;
             gap: 10px; /* Espaço menor entre os botões */
+            position: fixed; /* Fixa os botões na parte inferior */
+            bottom: 20px; /* Distância do fundo */
+            left: 50%; /* Centraliza horizontalmente */
+            transform: translateX(-50%); /* Ajusta o posicionamento */
+            z-index: 1000; /* Garante que fique acima de tudo */
         }
 
         /* Estilo para o botão de imprimir e compartilhar */
@@ -136,33 +169,6 @@
 
         /* Efeito de hover */
         .print-button:hover, .share-button:hover {
-            background-color: #333; /* Fundo preto mais escuro no hover */
-            color: #ffd700; /* Texto dourado mais brilhante no hover */
-        }
-
-        /* Botões de zoom */
-        .zoom-controls {
-            position: fixed; /* Fixa os botões no topo */
-            top: 10px; /* Distância do topo */
-            left: 50%; /* Centraliza horizontalmente */
-            transform: translateX(-50%); /* Ajusta o posicionamento */
-            display: flex;
-            gap: 10px;
-            z-index: 1000; /* Garante que fique acima de tudo */
-        }
-
-        .zoom-button {
-            padding: 8px 16px;
-            font-size: 14px;
-            cursor: pointer;
-            background-color: black; /* Fundo preto */
-            color: gold; /* Texto dourado */
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .zoom-button:hover {
             background-color: #333; /* Fundo preto mais escuro no hover */
             color: #ffd700; /* Texto dourado mais brilhante no hover */
         }
@@ -191,17 +197,12 @@
                 padding: 5px; /* Padding menor */
             }
 
-            .close-button {
+            .close-button, .zoom-button {
                 font-size: 18px; /* Tamanho menor para telas pequenas */
-                top: -25px; /* Posicionamento ajustado */
+                padding: 5px; /* Padding menor */
             }
 
             .print-button, .share-button {
-                padding: 6px 12px; /* Padding menor */
-                font-size: 12px; /* Tamanho menor para telas pequenas */
-            }
-
-            .zoom-button {
                 padding: 6px 12px; /* Padding menor */
                 font-size: 12px; /* Tamanho menor para telas pequenas */
             }
@@ -233,7 +234,7 @@
                 display: block !important; /* Garante que todas as páginas sejam exibidas */
             }
 
-            .controls, .close-button, .print-button, .share-button, .zoom-controls {
+            .controls, .close-button, .print-button, .share-button, .top-controls {
                 display: none; /* Oculta os botões durante a impressão */
             }
         }
@@ -242,15 +243,15 @@
 <body>
     <!-- Estrutura HTML -->
     <div class="book-container">
-        <!-- Botões de zoom -->
-        <div class="zoom-controls">
+        <!-- Botões de zoom e fechar -->
+        <div class="top-controls">
             <button class="zoom-button" id="zoomIn">+</button>
             <button class="zoom-button" id="zoomOut">-</button>
+            <button class="close-button" id="closeButton">✖</button>
         </div>
 
         <!-- Livro -->
         <div class="book" id="book">
-            <button class="close-button" id="closeButton">✖</button>
             <div class="page" id="page1">
                 <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/pagina1.jpg" alt="Página 1">
                 <div class="page-number">1</div>
@@ -281,19 +282,15 @@
             </div>
         </div>
 
-        <!-- Controles com gotas de óleo -->
+        <!-- Controles com gotas de óleo, imprimir e compartilhar -->
         <div class="controls">
+            <button class="print-button" id="printButton">Imprimir</button>
             <button class="nav-button" id="prevPage">
                 <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/gotaesquerda.png" alt="Anterior" width="32" height="32">
             </button>
             <button class="nav-button" id="nextPage">
                 <img src="https://raw.githubusercontent.com/DavissonCoelho/avantlube/main/gotadireita.png" alt="Próxima" width="32" height="32">
             </button>
-        </div>
-
-        <!-- Container para os botões de imprimir e compartilhar -->
-        <div class="button-container">
-            <button class="print-button" id="printButton">Imprimir</button>
             <button class="share-button" id="shareButton">Compartilhar</button>
         </div>
     </div>
